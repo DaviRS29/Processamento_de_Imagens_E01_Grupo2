@@ -11,6 +11,14 @@ Este repositório corresponde ao **Grupo 2**, responsável pelo módulo de **Con
 
 ---
 
+### 👩‍💻 Integrantes do Grupo
+DAVI ROCHA DOS SANTOS 
+JENIFER BEATRIZ SILVA DE LIMA 
+JOÃO THIAGO NUNES DA SILVEIRA FILHO JOÃO VITOR REZENDE MOURA 
+JULIO RAFAEL SOUZA PEIXOTO 
+
+---
+
 ### 🎯 Objetivos do Sistema
 - Centralizar o processamento de imagens em uma única plataforma.  
 - Facilitar a aplicação de filtros e transformações de forma controlada.  
@@ -45,18 +53,6 @@ Este repositório corresponde ao **Grupo 2**, responsável pelo módulo de **Con
 
 ---
 
-### 📁 Estrutura do Projeto
-```plaintext
-grupo2_conversao_cinza/
-│
-├── imagens/                # Imagens originais
-├── docs/                   # Relatórios e documentação
-├── src/                    # Códigos-fonte do projeto
-├── requirements.txt         # Dependências do projeto
-└── README.md                # Documentação do repositório
-
----
-
 ### 🧪 Fluxo de Processamento
 1. Upload ou carregamento da imagem
 2. Detecção de ruído
@@ -68,15 +64,16 @@ grupo2_conversao_cinza/
 
 ---
 
-### 📚 Conclusão
-O módulo desenvolvido pelo Grupo 2 implementa com sucesso a conversão de imagens para tons de cinza e avaliação da qualidade visual com base em nitidez e ruído.
- Esse trabalho contribui diretamente para o Sistema de Processamento de Imagens de Véridia, promovendo eficiência, padronização e potencial para futuras aplicações em visão computacional.
+### 📁 Estrutura do Projeto
+```plaintext
+grupo2_conversao_cinza/
+│
+├── imagens/                # Imagens originais
+├── docs/                   # Relatórios e documentação
+├── src/                    # Códigos-fonte do projeto
+├── requirements.txt         # Dependências do projeto
+└── README.md                # Documentação do repositório
 
----
 
-### 👩‍💻 Integrantes do Grupo
-DAVI ROCHA DOS SANTOS 
-JENIFER BEATRIZ SILVA DE LIMA 
-JOÃO THIAGO NUNES DA SILVEIRA FILHO JOÃO VITOR REZENDE MOURA 
-JULIO RAFAEL SOUZA PEIXOTO 
+
 
