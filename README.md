@@ -12,10 +12,12 @@ Este repositório corresponde ao **Grupo 2**, responsável pelo módulo de **Con
 ---
 
 ### 👩‍💻 Integrantes do Grupo
-DAVI ROCHA DOS SANTOS 
-JENIFER BEATRIZ SILVA DE LIMA 
-JOÃO THIAGO NUNES DA SILVEIRA FILHO JOÃO VITOR REZENDE MOURA 
-JULIO RAFAEL SOUZA PEIXOTO 
+
+- DAVI ROCHA DOS SANTOS 
+- JENIFER BEATRIZ SILVA DE LIMA 
+- JOÃO THIAGO NUNES DA SILVEIRA FILHO 
+- JOÃO VITOR REZENDE MOURA 
+- JULIO RAFAEL SOUZA PEIXOTO 
 
 ---
 
@@ -73,6 +75,7 @@ grupo2_conversao_cinza/
 ├── src/                    # Códigos-fonte do projeto
 ├── requirements.txt         # Dependências do projeto
 └── README.md                # Documentação do repositório
+
 
 
 
