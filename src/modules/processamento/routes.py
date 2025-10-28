@@ -1,8 +1,10 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi.responses import FileResponse
 from modules.processamento.schemas import ProcessamentoImagemResponse
 from modules.processamento.utils import _get_file_size, _detect_image_size_and_format
 from core.settings import settings
 from modules.processamento.service import ProcessamentoImagemService
+import os
 
 router = APIRouter(tags=["Processamento de Imagem"], prefix="/processamento")
 
@@ -10,11 +12,11 @@ router = APIRouter(tags=["Processamento de Imagem"], prefix="/processamento")
 @router.post("/processar-imagem", response_model=ProcessamentoImagemResponse)
 def processar_imagem(
     imagem: UploadFile = File(...),
-    pre_processamento: bool = True,
-    segmentacao: bool = True,
-    pos_processamento: bool = True,
-    extracao_atributos: bool = True,
-    classificacao_reconhecimento: bool = True,
+    pre_processamento: bool = False,
+    segmentacao: bool = False,
+    pos_processamento: bool = False,
+    extracao_atributos: bool = False,
+    classificacao_reconhecimento: bool = False,
 ):
     service = ProcessamentoImagemService()
     file_obj = imagem.file
@@ -45,7 +47,7 @@ def processar_imagem(
             detail=f"Resolução mínima é {settings.MIN_WIDTH}x{settings.MIN_HEIGHT}. Fornecida: {largura}x{altura}.",
         )
 
-    message = service.processar_imagem(
+    result = service.processar_imagem(
         imagem,
         pre_processamento,
         segmentacao,
@@ -55,7 +57,19 @@ def processar_imagem(
     )
 
     return ProcessamentoImagemResponse(
-        message=message,
+        message=result["message"],
         filename=imagem.filename,
-        processed_image_url=None,
+        processed_image_url=f"/download/{result['image_id']}",
+        file_base64=result["file_base64"],
     )
+
+
+@router.get("/download/{image_id}")
+def download_processed_image(image_id: str):
+    service = ProcessamentoImagemService()
+    filepath = os.path.join(service.output_folder, f"{image_id}.jpg")
+
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="Imagem não encontrada")
+
+    return FileResponse(filepath, media_type="image/jpeg")
