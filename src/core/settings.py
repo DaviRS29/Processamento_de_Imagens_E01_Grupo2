@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 from typing import Set
 
 class Settings(BaseSettings):
-    MAX_FILE_SIZE_MB: int = 10
+    MAX_FILE_SIZE_MB: int = 5
     MIN_WIDTH: int = 256
     MIN_HEIGHT: int = 256
     ALLOWED_FORMATS: Set[str] = {"jpeg", "png"}

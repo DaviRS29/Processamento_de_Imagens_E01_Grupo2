@@ -4,7 +4,7 @@ from typing import Optional, Tuple
 def _get_file_size(f) -> int:
     pos = f.tell()
     f.seek(0, 2)
-    size = f.tell()
+    size = f.tell()``
     f.seek(pos)
     return size
 
