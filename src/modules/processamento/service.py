@@ -8,8 +8,8 @@ class ProcessamentoImagemService:
         self.ensure_output_folder()
 
     def ensure_output_folder(self):
-        if not os.path.exists(settings.OUTPUT_FOLDER):
-            os.makedirs(settings.OUTPUT_FOLDER)
+        if not os.path.exists(self.output_folder):
+            os.makedirs(self.output_folder)
 
     def processar_imagem(
         self,
