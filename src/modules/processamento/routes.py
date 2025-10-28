@@ -1,9 +1,60 @@
-from fastapi import APIRouter
-from fastapi import UploadFile, File
+from fastapi import APIRouter, UploadFile, File, HTTPException
+from modules.processamento.schemas import ProcessamentoImagemResponse
+from modules.processamento.utils import _get_file_size, _detect_image_size_and_format
+from core.settings import settings
+from modules.processamento.service import ProcessamentoImagemService
 
-router = APIRouter(tags=["processamento-imagem"])
+router = APIRouter(tags=["Processamento de Imagem"], prefix="/processamento")
 
 
-@router.post("/processar-imagem")
-def processar_imagem(imagem: UploadFile = File(...)):
-    return {"message": "Imagem processada com sucesso!"}
+@router.post("/processar-imagem", response_model=ProcessamentoImagemResponse)
+def processar_imagem(
+    imagem: UploadFile = File(...),
+    pre_processamento: bool = True,
+    segmentacao: bool = True,
+    pos_processamento: bool = True,
+    extracao_atributos: bool = True,
+    classificacao_reconhecimento: bool = True,
+):
+    service = ProcessamentoImagemService(
+        pre_processamento,
+        segmentacao,
+        pos_processamento,
+        extracao_atributos,
+        classificacao_reconhecimento,
+    )
+    file_obj = imagem.file
+    tamanho_bytes = _get_file_size(file_obj)
+    max_size_bytes = settings.MAX_FILE_SIZE_MB * 1024 * 1024
+    if tamanho_bytes > max_size_bytes:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Arquivo muito grande. Máximo {settings.MAX_FILE_SIZE_MB}MB",
+        )
+
+    fmt, dims = _detect_image_size_and_format(file_obj)
+    if fmt not in settings.ALLOWED_FORMATS:
+        formatos_str = ", ".join(settings.ALLOWED_FORMATS).upper()
+        raise HTTPException(
+            status_code=400, detail=f"Formato não suportado. Use {formatos_str}."
+        )
+
+    if not dims:
+        raise HTTPException(
+            status_code=400, detail="Não foi possível obter a resolução da imagem."
+        )
+
+    largura, altura = dims
+    if largura < settings.MIN_WIDTH or altura < settings.MIN_HEIGHT:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Resolução mínima é {settings.MIN_WIDTH}x{settings.MIN_HEIGHT}. Fornecida: {largura}x{altura}.",
+        )
+
+    message = service.processar_imagem(imagem)
+
+    return ProcessamentoImagemResponse(
+        message=message,
+        filename=imagem.filename,
+        processed_image_url=None,
+    )
