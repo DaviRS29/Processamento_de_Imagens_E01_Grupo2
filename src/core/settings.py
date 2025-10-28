@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     MIN_HEIGHT: int = 256
     ALLOWED_FORMATS: Set[str] = {"jpeg", "png"}
     
+    OUTPUT_FOLDER: str = "images/"
+    
     class Config:
         env_file = ".env"
 

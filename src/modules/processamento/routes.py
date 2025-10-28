@@ -16,13 +16,7 @@ def processar_imagem(
     extracao_atributos: bool = True,
     classificacao_reconhecimento: bool = True,
 ):
-    service = ProcessamentoImagemService(
-        pre_processamento,
-        segmentacao,
-        pos_processamento,
-        extracao_atributos,
-        classificacao_reconhecimento,
-    )
+    service = ProcessamentoImagemService()
     file_obj = imagem.file
     tamanho_bytes = _get_file_size(file_obj)
     max_size_bytes = settings.MAX_FILE_SIZE_MB * 1024 * 1024
@@ -51,7 +45,14 @@ def processar_imagem(
             detail=f"Resolução mínima é {settings.MIN_WIDTH}x{settings.MIN_HEIGHT}. Fornecida: {largura}x{altura}.",
         )
 
-    message = service.processar_imagem(imagem)
+    message = service.processar_imagem(
+        imagem,
+        pre_processamento,
+        segmentacao,
+        pos_processamento,
+        extracao_atributos,
+        classificacao_reconhecimento,
+    )
 
     return ProcessamentoImagemResponse(
         message=message,
