@@ -14,7 +14,7 @@ class ImageMetadata(BaseModel):
         json_schema_extra = {
             "example": {
                 "image_id": "550e8400-e29b-41d4-a716-446655440000",
-                "filename": "image.jpg",
+                "filename": "550e8400-e29b-41d4-a716-446655440000.jpg",
                 "filepath": "processed_images/550e8400-e29b-41d4-a716-446655440000.jpg",
                 "file_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
             }
@@ -33,7 +33,7 @@ class ProcessamentoImagemResponse(BaseModel):
                 "generated_at": "2024-01-15T10:30:00",
                 "image_metadata": {
                     "image_id": "550e8400-e29b-41d4-a716-446655440000",
-                    "filename": "image.jpg",
+                    "filename": "550e8400-e29b-41d4-a716-446655440000.jpg",
                     "filepath": "processed_images/550e8400-e29b-41d4-a716-446655440000.jpg",
                     "file_base64": "iVBORw0KGgoAAAANSUhEUgAA..."
                 }
