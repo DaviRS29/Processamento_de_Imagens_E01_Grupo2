@@ -1,10 +1,16 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
-from fastapi.responses import FileResponse
-from modules.processamento.schemas import ProcessamentoImagemResponse
-from modules.processamento.utils import _get_file_size, _detect_image_size_and_format
-from core.settings import settings
-from modules.processamento.service import ProcessamentoImagemService
 import os
+
+from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi.responses import FileResponse
+
+from core.settings import settings
+from modules.processamento.schemas import ProcessamentoImagemResponse
+from modules.processamento.service import ProcessamentoImagemService
+from modules.processamento.utils import (
+    decode_image,
+    detect_image_size_and_format,
+    get_file_size,
+)
 
 router = APIRouter(tags=["Processamento de Imagem"], prefix="/processamento")
 
@@ -20,7 +26,7 @@ def processar_imagem(
 ):
     service = ProcessamentoImagemService()
     file_obj = imagem.file
-    tamanho_bytes = _get_file_size(file_obj)
+    tamanho_bytes = get_file_size(file_obj)
     max_size_bytes = settings.MAX_FILE_SIZE_MB * 1024 * 1024
     if tamanho_bytes > max_size_bytes:
         raise HTTPException(
@@ -28,7 +34,7 @@ def processar_imagem(
             detail=f"Arquivo muito grande. Máximo {settings.MAX_FILE_SIZE_MB}MB",
         )
 
-    fmt, dims = _detect_image_size_and_format(file_obj)
+    fmt, dims = detect_image_size_and_format(file_obj)
     if fmt not in settings.ALLOWED_FORMATS:
         formatos_str = ", ".join(settings.ALLOWED_FORMATS).upper()
         raise HTTPException(
@@ -47,20 +53,15 @@ def processar_imagem(
             detail=f"Resolução mínima é {settings.MIN_WIDTH}x{settings.MIN_HEIGHT}. Fornecida: {largura}x{altura}.",
         )
 
-    result = service.processar_imagem(
-        imagem,
+    cv_image = decode_image(imagem)
+
+    return service.processar_imagem(
+        cv_image,
         pre_processamento,
         segmentacao,
         pos_processamento,
         extracao_atributos,
         classificacao_reconhecimento,
-    )
-
-    return ProcessamentoImagemResponse(
-        message=result["message"],
-        filename=imagem.filename,
-        processed_image_url=f"/download/{result['image_id']}",
-        file_base64=result["file_base64"],
     )
 
 

@@ -1,8 +1,9 @@
-from fastapi import FastAPI
 import uvicorn
+from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
+
 from modules.processamento.routes import router as processamento_imagem_router
 from modules.relatorios.routes import router as relatorios_router
-from fastapi.responses import RedirectResponse
 
 app = FastAPI(prefix="/v1")
 

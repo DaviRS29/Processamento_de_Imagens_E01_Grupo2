@@ -1,5 +1,7 @@
-from pydantic_settings import BaseSettings
 from typing import Set
+
+from pydantic_settings import BaseSettings
+
 
 class Settings(BaseSettings):
     MAX_FILE_SIZE_MB: int = 5
