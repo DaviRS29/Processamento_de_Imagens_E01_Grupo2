@@ -15,14 +15,40 @@ from modules.processamento.utils import (
 router = APIRouter(tags=["Processamento de Imagem"], prefix="/processamento")
 
 
-@router.post("/processar-imagem", response_model=ProcessamentoImagemResponse)
+@router.post(
+    "/processar-imagem",
+    response_model=ProcessamentoImagemResponse,
+    summary="Processa uma imagem",
+    description="Recebe uma imagem e aplica transformações conforme os parâmetros fornecidos. "
+    "Suporta formatos JPEG e PNG com resolução mínima de 256x256 pixels.",
+    responses={
+        200: {"description": "Imagem processada com sucesso"},
+        400: {
+            "description": "Erro de validação (arquivo inválido, formato não suportado, etc.)"
+        },
+        500: {"description": "Erro interno do servidor"},
+    },
+)
 def processar_imagem(
-    imagem: UploadFile = File(...),
-    pre_processamento: bool = False,
-    segmentacao: bool = False,
-    pos_processamento: bool = False,
-    extracao_atributos: bool = False,
-    classificacao_reconhecimento: bool = False,
+    imagem: UploadFile = File(
+        ..., description="Arquivo de imagem para processar (JPEG ou PNG)"
+    ),
+    pre_processamento: bool = File(
+        False, description="Aplica técnicas de pré-processamento à imagem"
+    ),
+    segmentacao: bool = File(
+        False,
+        description="Converte a imagem para escala de cinza e aplica filtro Gaussian Blur",
+    ),
+    pos_processamento: bool = File(
+        False, description="Aplica técnicas de pós-processamento à imagem"
+    ),
+    extracao_atributos: bool = File(
+        False, description="Extrai atributos relevantes da imagem"
+    ),
+    classificacao_reconhecimento: bool = File(
+        False, description="Realiza classificação e reconhecimento de padrões"
+    ),
 ):
     service = ProcessamentoImagemService()
     file_obj = imagem.file
@@ -65,7 +91,15 @@ def processar_imagem(
     )
 
 
-@router.get("/download/{image_id}")
+@router.get(
+    "/download/{image_id}",
+    summary="Baixa imagem processada",
+    description="Retorna o arquivo de imagem processada a partir do ID fornecido",
+    responses={
+        200: {"description": "Arquivo de imagem processada"},
+        404: {"description": "Imagem não encontrada com o ID fornecido"},
+    },
+)
 def download_processed_image(image_id: str):
     service = ProcessamentoImagemService()
     filepath = os.path.join(service.output_folder, f"{image_id}.jpg")
