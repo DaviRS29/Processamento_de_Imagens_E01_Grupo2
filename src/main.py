@@ -6,7 +6,6 @@ from modules.processamento.routes import router as processamento_imagem_router
 from modules.relatorios.routes import router as relatorios_router
 
 app = FastAPI(
-    prefix="/v1",
     title="Sistema de Processamento de Imagens - Grupo 2",
     description="Sistema de processamento de imagens com conversão para escala de cinza, filtros de suavização e análise de qualidade",
     version="0.1.0",
