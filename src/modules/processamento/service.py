@@ -3,7 +3,7 @@ import os
 import uuid
 from datetime import datetime
 from io import BytesIO
-
+import matplotlib.pyplot as plt
 import cv2
 import numpy as np
 from PIL import Image
@@ -37,7 +37,7 @@ class ProcessamentoImagemService:
             pass
 
         if extracao_atributos:
-            pass
+            atributes = self.extracao_atributos(imagem)
 
         if classificacao_reconhecimento:
             pass
@@ -63,7 +63,7 @@ class ProcessamentoImagemService:
         pass
 
     def segmentacao(self, imagem: np.ndarray) -> np.ndarray:
-        grayscale: np.ndarray = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
+        grayscale: np.ndarray = self._convert_to_gray(imagem)
         blurred: np.ndarray = cv2.GaussianBlur(grayscale, (5, 5), 0)
         return blurred
 
@@ -71,7 +71,15 @@ class ProcessamentoImagemService:
         pass
 
     def extracao_atributos(self, imagem: np.ndarray):
-        pass
+        # Streamlit precisa rodar como sub-processo
+        gray_image: np.ndarray = self._convert_to_gray(imagem)
+        
+        img_histogram = cv2.calcHist([gray_image], [0], None, [256], [0, 256])
+        print(gray_image)
+        print(img_histogram)
+        plt.hist(img_histogram)
+        plt.show()
+
 
     def classificacao_reconhecimento(self, imagem: np.ndarray):
         pass
@@ -91,6 +99,10 @@ class ProcessamentoImagemService:
 
         pil_image.save(filepath, "JPEG", quality=95)
         return filepath, filename
+
+    def _convert_to_gray(self, cv_image:np.ndarray) -> np.ndarray:
+        gray_image: np.ndarray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
+        return gray_image
 
     def _convert_to_base64(self, cv_image: np.ndarray):
         if len(cv_image.shape) == 2:
