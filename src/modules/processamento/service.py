@@ -39,7 +39,7 @@ class ProcessamentoImagemService:
             processed_image = self.segmentacao(imagem)
 
         if pos_processamento:
-            pass
+            processed_image = self.pos_processamento(processed_image)      
 
         if extracao_atributos:
             atributes = self.extracao_atributos(imagem)
@@ -93,8 +93,11 @@ class ProcessamentoImagemService:
         blurred: np.ndarray = cv2.GaussianBlur(grayscale, (5, 5), 0)
         return blurred
 
-    def pos_processamento(self, imagem: np.ndarray):
-        pass
+    def pos_processamento(self, imagem: np.ndarray) -> np.ndarray:
+        imagem_gray = self._convert_to_gray(imagem)
+        imagem_equalizada = cv2.equalizeHist(imagem_gray)
+        return imagem_equalizada
+        
 
     def extracao_atributos(self, imagem: np.ndarray):
         # Streamlit precisa rodar como sub-processo
