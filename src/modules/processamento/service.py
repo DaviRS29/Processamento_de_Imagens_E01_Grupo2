@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 import cv2
 import numpy as np
 from PIL import Image
+from ultralytics import YOLO
+
+
 
 from src.modules.processamento.schemas import ImageMetadata, ProcessamentoImagemResponse
 
@@ -15,6 +18,7 @@ class ProcessamentoImagemService:
     def __init__(self):
         self.output_folder = "processed_images"
         self._ensure_output_folder()
+        self.model = YOLO("yolov8n.pt")
 
     def processar_imagem(
         self,
@@ -41,7 +45,7 @@ class ProcessamentoImagemService:
             atributes = self.extracao_atributos(imagem)
 
         if classificacao_reconhecimento:
-            pass
+            processed_image, resultados = self.classificacao_reconhecimento(processed_image)
 
         image_id = str(uuid.uuid4())
         filepath, filename = self._save_processed_image(processed_image, image_id)
@@ -104,7 +108,16 @@ class ProcessamentoImagemService:
 
 
     def classificacao_reconhecimento(self, imagem: np.ndarray):
-        pass
+        results = self.model(imagem)  
+        annotated_frame = results[0].plot()  
+
+        resultados = []
+        for box in results[0].boxes:
+            label = self.model.names[int(box.cls)]
+            conf = float(box.conf)
+            resultados.append((label, conf))
+
+        return annotated_frame, resultados
 
     def _ensure_output_folder(self):
         if not os.path.exists(self.output_folder):
