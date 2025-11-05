@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
-from src.modules.processamento.schemas import ImageMetadata, ProcessamentoImagemResponse
+from modules.processamento.schemas import ImageMetadata, ProcessamentoImagemResponse
 
 
 class ProcessamentoImagemService:
@@ -24,12 +24,11 @@ class ProcessamentoImagemService:
         pos_processamento,
         extracao_atributos,
         classificacao_reconhecimento,
-        pre_processamento_gamma,
     ) -> ProcessamentoImagemResponse:
         processed_image = imagem.copy()
 
         if pre_processamento:
-            processed_image = self.pre_processamento(processed_image, pre_processamento_gamma)
+            pass
 
         if segmentacao:
             processed_image = self.segmentacao(imagem)
@@ -60,29 +59,8 @@ class ProcessamentoImagemService:
             image_metadata=image_metadata,
         )
 
-    def pre_processamento(self, imagem: np.ndarray, pre_processamento_gamma: float) -> np.ndarray:
-        processed = imagem.copy()
-
-        processed = cv2.bilateralFilter(processed, d=9, sigmaColor=75, sigmaSpace=75)
-
-        if len(processed.shape) == 3:
-            lab = cv2.cvtColor(processed, cv2.COLOR_BGR2LAB)
-            l, a, b = cv2.split(lab)
-            clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-            l = clahe.apply(l)
-            processed = cv2.merge([l, a, b])
-            processed = cv2.cvtColor(processed, cv2.COLOR_LAB2BGR)
-        else:
-            clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-            processed = clahe.apply(processed)
-        
-        processed_float = processed.astype(np.float32) / 255.0
-        gamma = pre_processamento_gamma  
-        processed_float = np.power(processed_float, gamma)
-        
-        processed = (processed_float * 255).astype(np.uint8)
-        
-        return processed
+    def pre_processamento(self, imagem: np.ndarray):
+        pass
 
     def segmentacao(self, imagem: np.ndarray) -> np.ndarray:
         grayscale: np.ndarray = self._convert_to_gray(imagem)
