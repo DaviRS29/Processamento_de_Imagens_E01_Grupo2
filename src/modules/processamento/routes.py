@@ -3,10 +3,10 @@ import os
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 
-from core.settings import settings
-from modules.processamento.schemas import ProcessamentoImagemResponse
-from modules.processamento.service import ProcessamentoImagemService
-from modules.processamento.utils import (
+from src.core.settings import settings
+from src.modules.processamento.schemas import ProcessamentoImagemResponse
+from src.modules.processamento.service import ProcessamentoImagemService
+from src.modules.processamento.utils import (
     decode_image,
     detect_image_size_and_format,
     get_file_size,
@@ -35,6 +35,9 @@ def processar_imagem(
     ),
     pre_processamento: bool = File(
         False, description="Aplica técnicas de pré-processamento à imagem"
+    ),
+    pre_processamento_gamma: float = File(
+        1.0, description="Fator de correção de brilho (gamma correction) [0.0 - 2.0]",
     ),
     segmentacao: bool = File(
         False,
@@ -79,6 +82,12 @@ def processar_imagem(
             detail=f"Resolução mínima é {settings.MIN_WIDTH}x{settings.MIN_HEIGHT}. Fornecida: {largura}x{altura}.",
         )
 
+    if pre_processamento_gamma < 0.0 or pre_processamento_gamma > 2.0:
+        raise HTTPException(
+            status_code=400,
+            detail="Fator de correção de brilho (gamma correction) deve estar entre 0.0 e 2.0.",
+        )
+
     cv_image = decode_image(imagem)
 
     return service.processar_imagem(
@@ -88,6 +97,7 @@ def processar_imagem(
         pos_processamento,
         extracao_atributos,
         classificacao_reconhecimento,
+        pre_processamento_gamma,
     )
 
 
