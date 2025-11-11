@@ -71,6 +71,9 @@ class ProcessamentoImagemService:
         pass
 
     def extracao_atributos(self, imagem: np.ndarray):
+        # Plotar canais de cores da imagem original
+        self._plot_single_channel(imagem)
+        
         # Converter para escala de cinza
         gray_image: np.ndarray = self._convert_to_gray(imagem)
 
@@ -171,7 +174,50 @@ class ProcessamentoImagemService:
         # Save the figure
         output_path = os.path.join(self.output_folder, f"histogram_equalization_comparison-{uuid.uuid4()}.jpg")
         plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
-        plt.show()
+        print(f"Histograma equalizado salvo em: {output_path}")
         plt.close(fig)
         
         return equalized
+    
+    
+    def _plot_single_channel(self, original_image: np.ndarray):
+        """
+        Plot the three color channels (BGR/RGB) of the original image with their histograms.
+        
+        Args:
+            original_image: Input image in BGR format (from OpenCV)
+        """
+        # Convert BGR to RGB for proper color display
+        rgb_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+        
+        # Split into individual channels
+        channels = cv2.split(original_image)  # Returns BGR channels (Blue, Green, Red)
+        channel_colors = ['blue', 'green', 'red']
+        channel_names = ['Canal Azul (B)', 'Canal Verde (G)', 'Canal Vermelho (R)']
+        
+        # Create 3x2 figure (3 channels, each with image and histogram)
+        fig = plt.figure(figsize=(14, 12))
+        
+        for i, (channel, color, channel_name) in enumerate(zip(channels, channel_colors, channel_names)):
+            # Plot channel image
+            plt.subplot(3, 2, i*2 + 1)
+            plt.imshow(channel, cmap='gray')
+            plt.title(f"{channel_name} - Imagem", fontweight='bold')
+            plt.axis('off')
+            
+            # Plot channel histogram
+            plt.subplot(3, 2, i*2 + 2)
+            plt.hist(channel.ravel(), bins=256, range=[0, 256], color=color, alpha=0.7)
+            plt.title(f"{channel_name} - Histograma", fontweight='bold')
+            plt.xlabel("Intensidade de Pixel")
+            plt.ylabel("Frequência")
+            plt.grid(True, alpha=0.3)
+            plt.xlim([0, 255])
+        
+        plt.tight_layout()
+        
+        # Save the figure
+        output_path = os.path.join(self.output_folder, f"canais_cores-{uuid.uuid4()}.jpg")
+        plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
+        print(f"Canais de cores salvo em: {output_path}")
+        plt.close(fig)
