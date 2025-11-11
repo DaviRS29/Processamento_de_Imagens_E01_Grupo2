@@ -3,6 +3,8 @@
 
 ---
 
+
+
 ### 📘 Descrição do Projeto
 A cidade de **Véridia** está desenvolvendo um **Sistema de Processamento de Imagens** para uso em áreas como **educação, saúde e indústria**.  
 O sistema visa **analisar, transformar e realçar imagens digitais**, permitindo que operadores e administradores apliquem **filtros, transformações e análises de padrões**, mantendo registro dos resultados obtidos.  
@@ -76,7 +78,11 @@ grupo2_conversao_cinza/
 ├── requirements.txt         # Dependências do projeto
 └── README.md                # Documentação do repositório
 
+```
+
+## Extração de Atributos
+
+Dentro da extração de atributos, temos que uma das primeiras situações que temos, é a equalização da imagem quando contornada para a escala de cinza, e isso pode ser vista em:
 
 
-
-
+![Comparação de Histogramas](src/processed_images/histogram_equalization_comparison-071a8acd-e0ed-4e6a-a49f-56d4926d7bd8.jpg)
