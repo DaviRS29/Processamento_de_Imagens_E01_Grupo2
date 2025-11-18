@@ -47,11 +47,16 @@ class ProcessamentoImagemService:
             atributes = self.extracao_atributos(imagem)
 
         if classificacao_reconhecimento:
+            if len(processed_image.shape) == 2:
+                processed_image = cv2.cvtColor(processed_image, cv2.COLOR_GRAY2BGR)
+            elif processed_image.shape[2] == 1:
+                processed_image = cv2.cvtColor(processed_image.squeeze(), cv2.COLOR_GRAY2BGR)
+            
             processed_image, resultados = self.classificacao_reconhecimento(processed_image)
 
         image_id = str(uuid.uuid4())
         filepath, filename = self._save_processed_image(processed_image, image_id)
-        img_base64 = self._convert_to_base64(processed_image)
+        img_base64 = base64.b64encode(processed_image).decode("utf-8")
 
         image_metadata = ImageMetadata(
             image_id=image_id,
