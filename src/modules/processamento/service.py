@@ -38,7 +38,7 @@ class ProcessamentoImagemService:
             processed_image = self.pre_processamento(processed_image, pre_processamento_gamma)
 
         if segmentacao:
-            processed_image = self.segmentacao(imagem)
+            processed_image = self.segmentacao(processed_image)
 
         if pos_processamento:
             processed_image = self.pos_processamento(processed_image)      
@@ -146,18 +146,12 @@ class ProcessamentoImagemService:
         return filepath, filename
 
     def _convert_to_gray(self, cv_image: np.ndarray) -> np.ndarray:
-        gray_image: np.ndarray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
-        return gray_image
-
-    def _convert_to_base64(self, cv_image: np.ndarray):
         if len(cv_image.shape) == 2:
-            pil_image = Image.fromarray(cv_image, mode="L")
+            return cv_image
+        elif cv_image.shape[2] == 1:
+            return cv_image.squeeze()
         else:
-            pil_image = Image.fromarray(cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB))
-        buffer = BytesIO()
-        pil_image.save(buffer, format="JPEG", quality=95)
-        img_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
-        return img_base64
+            return cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
 
     def _equalize_hist(self, gray_image: np.ndarray) -> np.ndarray:
         """
